@@ -10,5 +10,7 @@ export default {
   'SMTP_PASSWORD': '',
   'EMAIL_NAME': '',
   'EMAIL_FROM': 'from@example.com',
-  'MONGODB_URL': ''
+  'MONGODB_URL': 'mongodb+srv://parvejhossain:parvejhossain@cluster0.jkdxpyh.mongodb.net/TimeTracker',
+  'TOKEN_KEY': 'token',
+  'SECRET': 'Z87QR98n034r3rsheif7939rufs9uf3w4ru2lxx2kallsflskdfksfpq'
 };

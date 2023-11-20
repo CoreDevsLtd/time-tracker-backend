@@ -47,7 +47,7 @@ export default function user() {
 
   /**
   * PATCH ‘/user/me’
-  * @description this route is used to update own profile.
+  * @description this route User used to update own profile.
   * @response {Object} 200 - the user.
   */
   this.route.patch('/user/me', auth, updateOwn(this));

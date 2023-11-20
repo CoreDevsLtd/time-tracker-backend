@@ -5,9 +5,9 @@ import User from './user.schema';
 /**
  * these are the set to validate the request body or query.
  */
-const createAllowed = new Set(['firstName', 'lastName', 'userName', 'email', 'password', 'role', 'gender', 'workingDays', 'dob', 'workingHours', 'maxProjectLimit', 'skillsets', 'status']);
-const allowedQuery = new Set(['firstName', 'lastName', 'username', 'page', 'limit', 'id', 'paginate', 'role']);
-const ownUpdateAllowed = new Set(['firstName', 'lastName', 'phone', 'avatar', 'passwordChange', 'data']);
+const createAllowed = new Set(['fName', 'lName', 'email', 'password', 'role', 'contact', 'status']);
+const allowedQuery = new Set(['firstName', 'lastName', 'page', 'limit', 'id', 'paginate', 'role']);
+const ownUpdateAllowed = new Set(['fName', 'lName', 'contact', 'passwordChange']);
 
 /**
  * Creates a new user in the database with the specified properties in the request body.
@@ -23,17 +23,9 @@ export const register = ({ db }) => async (req, res) => {
     const valid = Object.keys(req.body).every(k => createAllowed.has(k));
     if (!valid) return res.status(400).send('Bad request');
     req.body.password = await bcrypt.hash(req.body.password, 8);
-    // const user = await db.create({ table: User, key: { ...req.body } });
-    db.create({ table: User, key: { ...req.body, remainigTime: req?.body?.workingHours } })
-      .then(async user => {
-        await db.save(user);
-        res.status(200).send(user);
-      })
-      .catch(({ message }) => res.status(400).send({ message }));
-
-    // if (!user) return res.status(400).send('Bad request');
-    // await db.save(user);
-    // return res.status(200).send(user);
+    const user = await db.create({ table: User, key: { ...req.body } });
+    if (!user) return res.status(400).send('Bad request');
+    return res.status(200).send(user);
   }
   catch (e) {
     console.log(e);
@@ -57,7 +49,7 @@ export const login = ({ db, settings }) => async (req, res) => {
     const isValid = await bcrypt.compare(req.body.password, user.password);
     if (!isValid) return res.status(401).send('Unauthorized');
     const token = jwt.sign({ id: user.id }, settings.secret);
-    res.cookie(settings.secret, token, {
+    res.cookie(settings.TOKEN_KEY, token, {
       httpOnly: true,
       ...settings.useHTTP2 && {
         sameSite: 'None',
@@ -99,7 +91,7 @@ export const me = () => async (req, res) => {
  */
 export const logout = ({ settings }) => async (req, res) => {
   try {
-    res.clearCookie(settings.secret, {
+    res.clearCookie(settings.TOKEN_KEY, {
       httpOnly: true,
       ...settings.useHTTP2 && {
         sameSite: 'None',
