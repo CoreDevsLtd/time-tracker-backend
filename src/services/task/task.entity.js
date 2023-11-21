@@ -1,9 +1,9 @@
 import Task from './task.schema';
 // import rearrageSearch from '../../utils/rearrageSearch';
 
-const createAllowed = new Set(['name', 'user', 'service', 'customer', 'duration', 'billable', 'estimatedTime', 'notes', 'exportStatus']);
-const updatedAllowed = new Set(['name', 'service', 'customer', 'duration', 'billable', 'estimatedTime', 'notes', 'exportStatus']);
-const allowedQuery = new Set(['page', 'limit', 'id', '_id', 'paginate', 'status', 'sortBy']);
+const createAllowed = new Set(['name', 'user', 'service', 'customer', 'duration', 'billable', 'estimatedTime', 'notes', 'exportStatus', 'date']);
+const updatedAllowed = new Set(['name', 'service', 'customer', 'duration', 'billable', 'estimatedTime', 'notes', 'exportStatus', 'date']);
+const allowedQuery = new Set(['page', 'limit', 'id', '_id', 'paginate', 'status', 'sortBy', 'date']);
 
 /**
  * Create a new task. only admin can create this task.
