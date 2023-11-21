@@ -6,5 +6,8 @@ export const schemas = {
     id: 'string',
     name: 'string'
   },
-  
+  service: {
+    id: 'string',
+    name: 'string'
+  },
 };

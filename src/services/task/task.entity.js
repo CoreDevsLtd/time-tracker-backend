@@ -94,7 +94,7 @@ export const update = ({ db }) => async (req, res) => {
 
       let activeTime = task.activeTime[task.activeTime.length - 1];
       if ((activeTime.start || activeTime.end) !== undefined) {
-        task.activeTime.push({ [type]: time } );
+        task.activeTime.push({ [type]: time });
       } else {
         task.activeTime[type] = time;
       }

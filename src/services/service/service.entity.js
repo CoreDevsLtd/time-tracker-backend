@@ -22,10 +22,7 @@ export const create = ({ db, lyra }) => async (req, res) => {
     if (!service) return res.status(400).send('Bad Request');
 
     // insert product data for orama search
-    await lyra.insert('service', {
-      id: service.id,
-      name: service.name,
-    });
+    await lyra.insert('service', { id: service.id, name: service.name });
 
     return res.status(201).send(service);
   } catch (error) {
@@ -66,7 +63,7 @@ export const getAll = ({ db, lyra }) => async (req, res) => {
       delete req.query.search;
     }
 
-    let services = await db.find({ table: Service, key: { allowedQuery, query: req.query } });
+    let services = await db.find({ table: Service, key: { paginate: req.query.paginate === 'true', allowedQuery, query: req.query } });
 
     // mongodb find method change the serial of lyra search data. apply sorting for lyra search and mongodb search serial same.
     if (req.query.id) services = await rearrageSearch(req.query, services);
