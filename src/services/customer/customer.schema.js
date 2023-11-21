@@ -3,8 +3,6 @@ import paginate from 'mongoose-paginate-v2';
 
 const schema = new Schema({
   name: { type: String, required: true },
-  store: { type: Schema.Types.ObjectId, ref: 'Store', required: true },
-  image: { type: String }
 }, { timestamps: true, versionKey: false });
 
 schema.methods.toJSON = function () {
@@ -14,4 +12,4 @@ schema.methods.toJSON = function () {
 
 schema.plugin(paginate);
 
-export default model('Category', schema);
+export default model('Customer', schema);

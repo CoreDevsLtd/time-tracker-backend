@@ -12,11 +12,13 @@ export default async function (query, results) {
     Ids.forEach((value, index) => {
       indexMap[value] = index;
     });
+    let docs = query.paginate !== 'true' ? results : results.docs;
 
     // Sort result based on the indices of Ids
-    results.docs.sort((a, b) => indexMap[a.id] - indexMap[b.id]);
+    docs.sort((a, b) => indexMap[a.id] - indexMap[b.id]);
     return results;
   } catch (error) {
+    console.log(error);
     throw new Error('Something went wrong');
   }
 }

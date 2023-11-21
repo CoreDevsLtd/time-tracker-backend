@@ -1,4 +1,4 @@
-import Task from './task.scema';
+import Task from './task.schema';
 import rearrageSearch from '../../utils/rearrageSearch';
 
 const createAllowed = new Set(['name', 'service', 'customer', 'billable', 'estimatedTime', 'notes', 'exportStatus']);

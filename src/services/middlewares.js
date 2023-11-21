@@ -15,7 +15,7 @@ export function checkRole(allowed) {
       else throw new Error('Unauthorized.');
     }
     catch (e) {
-      res.status(401).send({ status: 401, reason: 'unauthorized' });
+      res.status(401).send('unauthorized');
     }
   };
 }
@@ -27,14 +27,14 @@ export function checkRole(allowed) {
 export async function auth(req, res, next) {
   try {
     const token = req.cookies[settings.TOKEN_KEY] || (process.env.NODE_ENV === 'development' ? req.header('Authorization')?.replace('Bearer ', '') : null);
-    if (!token) return res.status(401).send({ status: 401, reason: 'Unauthorized' });
+    if (!token) return res.status(401).send('Unauthorized');
     const user = await decodeAuthToken(token);
-    if (!user || !user.status) return res.status(401).send({ status: 401, reason: 'Unauthorized' });
+    if (!user || !user.status) return res.status(401).send('Unauthorized');
     req.token = token;
     req.user = user;
     next();
   } catch (e) {
     console.log(e);
-    res.status(401).send({ status: 401, reason: 'Unauthorized' });
+    res.status(401).send('Unauthorized');
   }
 }
