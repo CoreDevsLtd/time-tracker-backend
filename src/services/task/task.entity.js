@@ -18,7 +18,7 @@ export const create = ({ db }) => async (req, res) => {
     const isValid = Object.keys(req.body).every(key => createAllowed.has(key));
     if (!isValid) return res.status(400).send('Bad Request');
 
-    const task = await db.create({ table: Task, key: req.body });
+    const task = await db.create({ table: Task, key: { ...req.body, populate: { path: 'user service customer', select: 'fullName fName lName name' } } });
     if (!task) return res.status(400).send('Bad Request');
 
     return res.status(201).send(task);
@@ -35,7 +35,7 @@ export const create = ({ db }) => async (req, res) => {
  */
 export const get = ({ db }) => async (req, res) => {
   try {
-    let task = await db.findOne({ table: Task, key: { id: req.params.id } });
+    let task = await db.findOne({ table: Task, key: { id: req.params.id, populate: { path: 'user service customer', select: 'fullName fName lName name' } } });
     if (!task) return res.status(400).send('Task not found');
     res.status(200).send(task);
   } catch (error) {
@@ -60,7 +60,7 @@ export const getAll = ({ db, lyra }) => async (req, res) => {
       delete req.query.search;
     }
 
-    let tasks = await db.find({ table: Task, key: { paginate: req.query.paginate !== 'false', allowedQuery, query: { ...req.query }, populate: { path: 'user service customer', select: 'fullName fName lName name'} } });
+    let tasks = await db.find({ table: Task, key: { paginate: req.query.paginate !== 'false', allowedQuery, query: { ...req.query }, populate: { path: 'user service customer', select: 'fullName fName lName name' } } });
 
     res.status(200).send(tasks);
   } catch (error) {
@@ -82,7 +82,7 @@ export const update = ({ db }) => async (req, res) => {
     const isValid = Object.keys(req.body).every(key => updatedAllowed.has(key));
     if (!isValid) return res.status(400).send('Bad Request');
 
-    const task = await db.findOne({ table: Task, key: { id: req.params.id } });
+    const task = await db.findOne({ table: Task, key: { id: req.params.id, populate: { path: 'user service customer', select: 'fullName fName lName name' } } });
     if (!task) return res.status(400).send('Task not found');
 
     // update time property if use provide time property.
