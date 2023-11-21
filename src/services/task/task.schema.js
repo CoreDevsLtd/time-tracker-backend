@@ -8,10 +8,11 @@ const schema = new Schema({
   service: { type: ObjectId, ref: 'Service', required: true },
   customer: { type: ObjectId, ref: 'Customer', required: true },
   billable: { type: Boolean, default: true },
-  duration: { type: Number },
+  duration: { type: Object },
   estimatedTime: [{ start: { type: Number } }, { end: { type: Number } }],
   notes: { type: String },
-  exportStatus: { type: Boolean, default: false }
+  exportStatus: { type: Boolean, default: false },
+  date: { type: Date, default: new Date }
 }, { timestamps: true, versionKey: false });
 
 schema.methods.toJSON = function () {

@@ -60,7 +60,7 @@ export const getAll = ({ db, lyra }) => async (req, res) => {
       delete req.query.search;
     }
 
-    let tasks = await db.find({ table: Task, key: { paginate: req.query.paginate === 'true', allowedQuery, query: { ...req.query }, populate: { path: 'user service customer', select: 'fullName fName lName name'} } });
+    let tasks = await db.find({ table: Task, key: { paginate: req.query.paginate !== 'false', allowedQuery, query: { ...req.query }, populate: { path: 'user service customer', select: 'fullName fName lName name'} } });
 
     res.status(200).send(tasks);
   } catch (error) {
