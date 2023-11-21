@@ -1,22 +1,20 @@
 import { auth, checkRole } from '../middlewares';
-import { create, getAll } from './category.entity';
+import { create, getAll } from './customer.entity';
 
 
-export default function category() {
-
-  /**
-  * POST /category
-  * @description This route is used to create a category.
-  * @response {Object} 201 - the new category.
-  */
-  this.route.post('/category', auth, checkRole(['admin']), create(this));
+export default function customer() {
 
   /**
-  * GET /category
-  * @description This route is used to create a category.
-  * @response {Object} 200 - all category.
+  * POST /customer
+  * @description This route is used to create a customer.
+  * @response {Object} 201 - the new customer.
   */
-  this.route.get('/category', auth, getAll(this));
+  this.route.post('/customer', auth, checkRole(['admin']), create(this));
 
-
+  /**
+  * GET /customer
+  * @description This route is used to create a customer.
+  * @response {Object} 200 - all customer.
+  */
+  this.route.get('/customer', auth, getAll(this));
 }
