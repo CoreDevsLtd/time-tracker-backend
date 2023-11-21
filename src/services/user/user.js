@@ -8,7 +8,7 @@ export default function user() {
   * @description This route is used to create a user.
   * @response {Object} 200 - the new user.
   */
-  this.route.post('/user', register(this));
+  this.route.post('/user', auth, checkRole(['admin']), register(this));
 
   /**
   * POST /user/login
@@ -36,7 +36,7 @@ export default function user() {
   * @description this route is used to used get all user.
   * @response {Object} 200 - the users.
   */
-  this.route.get('/user', auth, getAll(this));
+  this.route.get('/user', auth, checkRole(['admin']), getAll(this));
 
   /**
   * GET user/profile/:id
@@ -60,9 +60,9 @@ export default function user() {
   this.route.patch('/user/:id', auth, checkRole(['admin']), updateUser(this));
 
   /**
-* DELETE ‘/user/:id’
-* @description this route is used to delte user profile.
-* @response {Object} 200 - the user.
-*/
-  this.route.delete('/user/:id', auth, checkRole(['admin', 'super-admin']), remove(this));
+  * DELETE ‘/user/:id’
+  * @description this route is used to delte user profile.
+  * @response {Object} 200 - the user.
+  */
+  this.route.delete('/user/:id', auth, checkRole(['admin']), remove(this));
 }

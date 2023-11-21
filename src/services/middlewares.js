@@ -1,4 +1,5 @@
 import decodeAuthToken from '../utils/decodeAuthToken';
+import settings from '../settings';
 
 /**
  * This function is used for validating user role.
@@ -25,10 +26,10 @@ export function checkRole(allowed) {
  */
 export async function auth(req, res, next) {
   try {
-    const token = req.cookies?.coredevs || (process.env.NODE_ENV === 'development' ? req.header('Authorization')?.replace('Bearer ', '') : null);
+    const token = req.cookies[settings.TOKEN_KEY] || (process.env.NODE_ENV === 'development' ? req.header('Authorization')?.replace('Bearer ', '') : null);
     if (!token) return res.status(401).send({ status: 401, reason: 'Unauthorized' });
     const user = await decodeAuthToken(token);
-    if (!user || user.status === 'deactive') return res.status(401).send({ status: 401, reason: 'Unauthorized' });
+    if (!user || !user.status) return res.status(401).send({ status: 401, reason: 'Unauthorized' });
     req.token = token;
     req.user = user;
     next();

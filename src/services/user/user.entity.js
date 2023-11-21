@@ -5,8 +5,8 @@ import User from './user.schema';
 /**
  * these are the set to validate the request body or query.
  */
-const createAllowed = new Set(['fName', 'lName', 'email', 'password', 'role', 'contact', 'status']);
-const allowedQuery = new Set(['firstName', 'lastName', 'page', 'limit', 'id', 'paginate', 'role']);
+const createAllowed = new Set(['fName', 'lName', 'email', 'password', 'contact']);
+const allowedQuery = new Set(['page', 'limit', 'id', 'paginate', 'role']);
 const ownUpdateAllowed = new Set(['fName', 'lName', 'contact', 'passwordChange']);
 
 /**
@@ -23,6 +23,7 @@ export const register = ({ db }) => async (req, res) => {
     const valid = Object.keys(req.body).every(k => createAllowed.has(k));
     if (!valid) return res.status(400).send('Bad request');
     req.body.password = await bcrypt.hash(req.body.password, 8);
+    req.body.role = 'user';
     const user = await db.create({ table: User, key: { ...req.body } });
     if (!user) return res.status(400).send('Bad request');
     return res.status(200).send(user);
@@ -48,7 +49,7 @@ export const login = ({ db, settings }) => async (req, res) => {
     if (!user) return res.status(401).send('Unauthorized');
     const isValid = await bcrypt.compare(req.body.password, user.password);
     if (!isValid) return res.status(401).send('Unauthorized');
-    const token = jwt.sign({ id: user.id }, settings.secret);
+    const token = jwt.sign({ id: user.id }, settings.SECRET);
     res.cookie(settings.TOKEN_KEY, token, {
       httpOnly: true,
       ...settings.useHTTP2 && {
@@ -116,7 +117,7 @@ export const logout = ({ settings }) => async (req, res) => {
  */
 export const getAll = ({ db }) => async (req, res) => {
   try {
-    const users = await db.find({ table: User, key: { query: req.query, allowedQuery: allowedQuery, paginate: req.query.paginate === 'true' } });
+    const users = await db.find({ table: User, key: { query: { role: 'user', ...req.query }, allowedQuery, paginate: req.query.paginate !== 'false' } });
     res.status(200).send(users);
   }
   catch (err) {
@@ -130,11 +131,11 @@ export const getAll = ({ db }) => async (req, res) => {
  * This function is used to find a user by id.
  * @param {Object} req This is the request object.
  * @param {Object} res this is the response object
- * @returns It returns the data of the id otherwise no result found with status 404 .
+ * @returns It returns the data of the id otherwise no result found with status 404.
  */
 export const userProfile = ({ db }) => async (req, res) => {
   try {
-    const user = await db.findOne({ table: User, key: { id: req.params.id, populate: { path: 'role', select: 'name department' } } });
+    const user = await db.findOne({ table: User, key: { id: req.params.id } });
     if (!user) return res.status(404).send('No result found');
     res.status(200).send(user);
   }
@@ -158,12 +159,8 @@ const setPassword = async ({ oldPass, newPass, user }) => {
  * @param {Object} res this is the response object
  * @returns It returns the updated data.
  */
-export const updateOwn = ({ db, imageUp }) => async (req, res) => {
+export const updateOwn = ({ db }) => async (req, res) => {
   try {
-    if (req.files?.avatar?.path) {
-      req.body = JSON.parse(req.body.data || '{}');
-      req.body.avatar = await imageUp(req.files?.avatar.path);
-    }
     const isValid = Object.keys(req.body).every(k => ownUpdateAllowed.has(k));
     if (!isValid) return res.status(400).send('Bad request');
     if (req.body.passwordChange) {
@@ -187,12 +184,8 @@ export const updateOwn = ({ db, imageUp }) => async (req, res) => {
  * @param {Object} res this is the response object
  * @returns It returns the updated data.
  */
-export const updateUser = ({ db, imageUp }) => async (req, res) => {
+export const updateUser = ({ db }) => async (req, res) => {
   try {
-    req.body = JSON.parse(req.body.data || '{}');
-    if (req.files?.avatar?.path) {
-      req.body.avatar = await imageUp(req.files?.avatar.path);
-    }
     const user = await db.findOne({ table: User, key: { id: req.params.id } });
     if (!user) return res.status(400).send('Bad request');
     if (req.body.password) req.body.password = await bcrypt.hash(req.body.password, 8);
