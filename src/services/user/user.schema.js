@@ -16,8 +16,6 @@ schema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
   obj.fullName = `${obj.fName} ${obj.lName}`;
-  delete obj.fName;
-  delete obj.lName;
   return JSON.parse(JSON.stringify(obj).replace(/_id/g, 'id'));
 };
 

@@ -1,7 +1,7 @@
 import Task from './task.schema';
 import rearrageSearch from '../../utils/rearrageSearch';
 
-const createAllowed = new Set(['name', 'service', 'customer', 'billable', 'estimatedTime', 'notes', 'exportStatus']);
+const createAllowed = new Set(['name', 'user', 'service', 'customer', 'duration', 'billable', 'estimatedTime', 'notes', 'exportStatus']);
 const updatedAllowed = new Set(['name', 'service', 'customer', 'billable', 'estimatedTime', 'notes', 'exportStatus']);
 const allowedQuery = new Set(['page', 'limit', 'id', '_id', 'paginate', 'status', 'sortBy']);
 
@@ -60,7 +60,7 @@ export const getAll = ({ db, lyra }) => async (req, res) => {
       delete req.query.search;
     }
 
-    let tasks = await db.find({ table: Task, key: { allowedQuery, query: req.query } });
+    let tasks = await db.find({ table: Task, key: { paginate: req.query.paginate === 'true', allowedQuery, query: req.query } });
 
     // mongodb find method change the serial of lyra search data. apply sorting for lyra search and mongodb search serial same.
     if (req.query.id) tasks = await rearrageSearch(req.query, tasks);
