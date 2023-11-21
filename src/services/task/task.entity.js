@@ -2,7 +2,7 @@ import Task from './task.schema';
 // import rearrageSearch from '../../utils/rearrageSearch';
 
 const createAllowed = new Set(['name', 'user', 'service', 'customer', 'duration', 'billable', 'estimatedTime', 'notes', 'exportStatus']);
-const updatedAllowed = new Set(['name', 'service', 'customer', 'billable', 'estimatedTime', 'notes', 'exportStatus']);
+const updatedAllowed = new Set(['name', 'service', 'customer', 'duration', 'billable', 'estimatedTime', 'notes', 'exportStatus']);
 const allowedQuery = new Set(['page', 'limit', 'id', '_id', 'paginate', 'status', 'sortBy']);
 
 /**
