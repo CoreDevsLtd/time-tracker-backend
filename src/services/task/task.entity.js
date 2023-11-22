@@ -61,8 +61,8 @@ export const getAll = ({ db }) => async (req, res) => {
         query: { ...req.query },
         populate: {
           path: 'user service customer',
-          select: 'fullName fName lName name',
-          option: { sort: { fName: -1 } }
+          select: 'fName lName name',
+          options: { sort: [['customer.name', 'desc']] }
         }
       }
     });
