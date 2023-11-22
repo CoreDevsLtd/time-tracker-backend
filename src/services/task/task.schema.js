@@ -18,7 +18,7 @@ const schema = new Schema({
 
 schema.methods.toJSON = function () {
   const obj = this.toObject();
-  obj.duration = formatTime(obj.duration);
+  // obj.duration = formatTime(obj.duration);
   return JSON.parse(JSON.stringify(obj).replace(/_id/g, 'id'));
 };
 
