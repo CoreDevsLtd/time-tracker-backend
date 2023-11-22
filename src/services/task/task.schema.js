@@ -8,7 +8,7 @@ const schema = new Schema({
   service: { type: ObjectId, ref: 'Service', required: true },
   customer: { type: ObjectId, ref: 'Customer', required: true },
   billable: { type: Boolean, default: true },
-  duration: { minute: { type: Number }, second: { type: Number } },
+  duration: { minute: { type: Number, default: 0 }, second: { type: Number, default: 0 } },
   elapsedTime: [{ type: Object }],
   notes: { type: String },
   exportStatus: { type: Boolean, default: false },

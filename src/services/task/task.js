@@ -28,12 +28,12 @@ export default function task() {
   * @description This route is used to update task. only admin can update task.
   * @response {Object} 200 - updated task object.
   */
-  this.route.patch('/task/:id', auth, checkRole(['admin']), update(this));
+  this.route.patch('/task/:id', auth, checkRole(['admin', 'user']), update(this));
 
   /**
   * DELETE /task/:id
   * @description This route is used to delete task. only admin can delete task.
   * @response {Object} 200 - success or fail message.
   */
-  this.route.delete('/task/:id', auth, checkRole(['admin']), remove(this));
+  this.route.delete('/task/:id', auth, checkRole(['admin', 'user']), remove(this));
 }

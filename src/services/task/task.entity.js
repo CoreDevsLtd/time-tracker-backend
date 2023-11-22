@@ -3,7 +3,7 @@ import Task from './task.schema';
 
 const createAllowed = new Set(['name', 'user', 'service', 'customer', 'duration', 'billable', 'elapsedTime', 'notes', 'exportStatus', 'date']);
 const updatedAllowed = new Set(['name', 'service', 'customer', 'duration', 'billable', 'elapsedTime', 'notes', 'exportStatus', 'date', 'activeTime', 'user']);
-const allowedQuery = new Set(['page', 'limit', 'id', '_id', 'paginate', 'status', 'sortBy', 'date']);
+const allowedQuery = new Set(['page', 'limit', 'id', '_id', 'paginate', 'status', 'sortBy', 'date', 'user']);
 
 /**
  * Create a new task. only admin can create this task.
@@ -50,18 +50,22 @@ export const get = ({ db }) => async (req, res) => {
  * @param {Object} db - The database object for interacting with the database.
  * @returns {Object} - get all task information.
  */
-export const getAll = ({ db, lyra }) => async (req, res) => {
+export const getAll = ({ db }) => async (req, res) => {
   try {
-    // implementing orama search
-    if (req.query.search) {
-      const data = await lyra.search('task', { term: req.query.search });
-      const Ids = data.hits.map(elem => elem.id);
-      req.query.id = { $in: Ids };
-      req.query.page = 1;
-      delete req.query.search;
-    }
-
-    let tasks = await db.find({ table: Task, key: { paginate: req.query.paginate !== 'false', allowedQuery, query: { ...req.query }, populate: { path: 'user service customer', select: 'fullName fName lName name' } } });
+    if (req.user.role !== 'admin') req.query.user = req.user.id;
+    let tasks = await db.find({
+      table: Task,
+      key: {
+        paginate: req.query.paginate !== 'false',
+        allowedQuery,
+        query: { ...req.query },
+        populate: {
+          path: 'user service customer',
+          select: 'fullName fName lName name',
+          option: { sort: { fName: -1 } }
+        }
+      }
+    });
 
     res.status(200).send(tasks);
   } catch (error) {
@@ -89,23 +93,24 @@ export const update = ({ db }) => async (req, res) => {
 
     // update time property if use provide time property.
     if (req.body.activeTime) {
-      let { type, time } = req.body.activeTime;
+      let { type } = req.body.activeTime;
 
       let lastIndex = task.elapsedTime.length - 1;
       let activeTime = task.elapsedTime[lastIndex];
+      let currentSecond = new Date().getTime();
 
       if (task.elapsedTime.length > 0) {
 
         if (activeTime?.start === undefined || activeTime?.end === undefined) {
-          activeTime[type] = time;
+          activeTime[type] = currentSecond;
           task.elapsedTime[lastIndex] = activeTime;
         } else {
-          task.elapsedTime.push({ [type]: time });
+          task.elapsedTime.push({ [type]: currentSecond });
         }
 
         delete req.body.activeTime;
       } else {
-        task.elapsedTime.push({ [type]: time });
+        task.elapsedTime.push({ [type]: currentSecond });
       }
     }
 
