@@ -10,7 +10,7 @@ const schema = new Schema({
   customer: { type: ObjectId, ref: 'Customer', required: true },
   billable: { type: Boolean, default: true },
   duration: { minute: { type: Number }, second: { type: Number } },
-  elapsedTime: [{ start: { type: Number } }, { end: { type: Number } }],
+  elapsedTime: [{ _id: false, start: { type: Number } }, { end: { type: Number } }],
   notes: { type: String },
   exportStatus: { type: Boolean, default: false },
   date: { type: Date, default: new Date }
@@ -18,7 +18,6 @@ const schema = new Schema({
 
 schema.methods.toJSON = function () {
   const obj = this.toObject();
-  obj.duration = formatTime(obj.duration);
   return JSON.parse(JSON.stringify(obj).replace(/_id/g, 'id'));
 };
 

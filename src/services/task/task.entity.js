@@ -1,8 +1,8 @@
 import Task from './task.schema';
 // import rearrageSearch from '../../utils/rearrageSearch';
 
-const createAllowed = new Set(['name', 'user', 'service', 'customer', 'duration', 'billable', 'estimatedTime', 'notes', 'exportStatus', 'date']);
-const updatedAllowed = new Set(['name', 'service', 'customer', 'duration', 'billable', 'estimatedTime', 'notes', 'exportStatus', 'date']);
+const createAllowed = new Set(['name', 'user', 'service', 'customer', 'duration', 'billable', 'elapsedTime', 'notes', 'exportStatus', 'date']);
+const updatedAllowed = new Set(['name', 'service', 'customer', 'duration', 'billable', 'elapsedTime', 'notes', 'exportStatus', 'date', 'activeTime']);
 const allowedQuery = new Set(['page', 'limit', 'id', '_id', 'paginate', 'status', 'sortBy', 'date']);
 
 /**
@@ -89,12 +89,16 @@ export const update = ({ db }) => async (req, res) => {
     if (req.body.activeTime) {
       let { type, time } = req.body.activeTime;
 
-      let activeTime = task.activeTime[task.activeTime.length - 1];
-      if ((activeTime.start || activeTime.end) !== undefined) {
-        task.activeTime.push({ [type]: time });
+      let activeTime = task.elapsedTime[task.elapsedTime.length - 1];
+
+      if ((activeTime?.end === undefined) ) {
+        activeTime[type] = time;
+        // console.log(activeTime);
+        task.elapsedTime = activeTime;
       } else {
-        task.activeTime[type] = time;
+        task.elapsedTime.push({ [type]: time });
       }
+      await task.save();
       delete req.body.activeTime;
     }
 
