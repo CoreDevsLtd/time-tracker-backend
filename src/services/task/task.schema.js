@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose';
 import paginate from 'mongoose-paginate-v2';
-import { formatTime } from './task.function';
 const ObjectId = Schema.Types.ObjectId;
 
 const schema = new Schema({
@@ -10,7 +9,7 @@ const schema = new Schema({
   customer: { type: ObjectId, ref: 'Customer', required: true },
   billable: { type: Boolean, default: true },
   duration: { minute: { type: Number }, second: { type: Number } },
-  elapsedTime: [{ _id: false, start: { type: Number } }, { end: { type: Number } }],
+  elapsedTime: [{ type: Object }],
   notes: { type: String },
   exportStatus: { type: Boolean, default: false },
   date: { type: Date, default: new Date }

@@ -2,7 +2,7 @@ import Task from './task.schema';
 // import rearrageSearch from '../../utils/rearrageSearch';
 
 const createAllowed = new Set(['name', 'user', 'service', 'customer', 'duration', 'billable', 'elapsedTime', 'notes', 'exportStatus', 'date']);
-const updatedAllowed = new Set(['name', 'service', 'customer', 'duration', 'billable', 'elapsedTime', 'notes', 'exportStatus', 'date', 'activeTime']);
+const updatedAllowed = new Set(['name', 'service', 'customer', 'duration', 'billable', 'elapsedTime', 'notes', 'exportStatus', 'date', 'activeTime', 'user']);
 const allowedQuery = new Set(['page', 'limit', 'id', '_id', 'paginate', 'status', 'sortBy', 'date']);
 
 /**
@@ -14,6 +14,7 @@ const allowedQuery = new Set(['page', 'limit', 'id', '_id', 'paginate', 'status'
  */
 export const create = ({ db }) => async (req, res) => {
   try {
+    req.body = req.body?.data ? JSON.parse(req.body?.data) : req.body;
     // check user provide valid properties
     const isValid = Object.keys(req.body).every(key => createAllowed.has(key));
     if (!isValid) return res.status(400).send('Bad Request');
@@ -78,6 +79,7 @@ export const getAll = ({ db, lyra }) => async (req, res) => {
  */
 export const update = ({ db }) => async (req, res) => {
   try {
+    req.body = req.body?.data ? JSON.parse(req.body?.data) : req.body;
     // check user provide valid properties
     const isValid = Object.keys(req.body).every(key => updatedAllowed.has(key));
     if (!isValid) return res.status(400).send('Bad Request');
@@ -89,17 +91,22 @@ export const update = ({ db }) => async (req, res) => {
     if (req.body.activeTime) {
       let { type, time } = req.body.activeTime;
 
-      let activeTime = task.elapsedTime[task.elapsedTime.length - 1];
+      let lastIndex = task.elapsedTime.length - 1;
+      let activeTime = task.elapsedTime[lastIndex];
 
-      if ((activeTime?.end === undefined) ) {
-        activeTime[type] = time;
-        // console.log(activeTime);
-        task.elapsedTime = activeTime;
+      if (task.elapsedTime.length > 0) {
+
+        if (activeTime?.start === undefined || activeTime?.end === undefined) {
+          activeTime[type] = time;
+          task.elapsedTime[lastIndex] = activeTime;
+        } else {
+          task.elapsedTime.push({ [type]: time });
+        }
+
+        delete req.body.activeTime;
       } else {
         task.elapsedTime.push({ [type]: time });
       }
-      await task.save();
-      delete req.body.activeTime;
     }
 
     Object.keys(req.body || {}).forEach(key => task[key] = req.body[key]);
