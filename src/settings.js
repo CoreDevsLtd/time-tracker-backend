@@ -1,7 +1,8 @@
 export default {
   'port': process.env.PORT || 4000,
   'origin': [
-    '*'
+    '*',
+    'http://localhost:5173'
   ],
   'useHTTP2': false,
   'SMTP_HOST': '',

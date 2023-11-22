@@ -49,7 +49,7 @@ export const getAll = ({ db, lyra }) => async (req, res) => {
     }
 
     let customer = await db.find({ table: Customer, key: { allowedQuery, paginate: req.query.paginate === 'true', query: { ...req.query } } });
-    console.log(customer);
+
     // mongodb find method change the serial of lyra search data. apply sorting for lyra search and mongodb search serial same.
     if (req.query.id) customer = await rearrageSearch(req.query, customer);
 
