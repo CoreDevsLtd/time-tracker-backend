@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import paginate from 'mongoose-paginate-v2';
+// import paginate from 'mongoose-paginate-v2';
 const ObjectId = Schema.Types.ObjectId;
 
 const schema = new Schema({
@@ -13,13 +13,13 @@ const schema = new Schema({
   notes: { type: String },
   exportStatus: { type: Boolean, default: false },
   date: { type: Date, default: new Date }
-}, { timestamps: true, versionKey: false });
+}, { versionKey: false });
 
 schema.methods.toJSON = function () {
   const obj = this.toObject();
   return JSON.parse(JSON.stringify(obj).replace(/_id/g, 'id'));
 };
 
-schema.plugin(paginate);
+// schema.plugin(paginate);
 
 export default model('Task', schema);
