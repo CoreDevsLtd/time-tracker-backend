@@ -215,4 +215,6 @@ const sort = async (data, payload = {}) => await data.sort(payload);
 
 const aggr = async ({ table, key }) => await table.aggregate(key);
 
-export { find, findOne, create, remove, update, save, removeAll, populate, sort, aggr, updateMany };
+const countDocs = async ({ table, key }) => await table.countDocuments(key);
+
+export { find, findOne, create, remove, update, save, removeAll, populate, sort, aggr, updateMany, countDocs };

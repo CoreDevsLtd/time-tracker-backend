@@ -6,7 +6,7 @@ import User from './user.schema';
  * these are the set to validate the request body or query.
  */
 const createAllowed = new Set(['fName', 'lName', 'email', 'password', 'contact']);
-const allowedQuery = new Set(['page', 'limit', 'id', 'paginate', 'role']);
+const allowedQuery = new Set(['page', 'limit', 'id', 'paginate', 'role', 'sortBy']);
 const ownUpdateAllowed = new Set(['fName', 'lName', 'contact', 'passwordChange']);
 
 /**
